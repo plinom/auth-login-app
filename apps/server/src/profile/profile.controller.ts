@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Get,
   HttpCode,
@@ -28,6 +27,8 @@ import { HttpExceptionDto } from '../signup/dto/http-exception.dto';
 import { AvatarDto } from './dto/avatar.dto';
 import { UserProfileDto } from './dto/user.profile.dto';
 import { JwtMainGuard } from './guards/jwt-main.guard';
+import { MaxSizeAvatarPipe } from './pipes/max-size-avatar.pipe';
+import { TypeAvatarPipe } from './pipes/type-avatar.pipe';
 import { ProfileService } from './profile.service';
 /**
  *
@@ -131,7 +132,8 @@ export class ProfileController {
   })
   async uploadAvatar(
     // @Req() req: Request & { user: PayloadDto },
-    @UploadedFile('file') avatarDto: AvatarDto,
+    @UploadedFile(new MaxSizeAvatarPipe(), new TypeAvatarPipe())
+    avatarDto: AvatarDto,
     @Res() res: Response
   ): Promise<Response> {
     try {

@@ -1,5 +1,5 @@
 import { AvatarInterface } from '@msg-monorepo/dto';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 /**
  *
  *
@@ -8,5 +8,20 @@ import { IsNotEmpty, IsString } from 'class-validator';
  * @implements {AvatarInterface}
  */
 export class AvatarDto implements AvatarInterface {
-  avatar: string;
+  @IsString()
+  fieldname: string;
+
+  @IsString()
+  originalname: string;
+
+  @IsString()
+  encoding: string;
+
+  @IsString()
+  mimetype: string;
+
+  buffer: Buffer;
+
+  @IsNumber()
+  size: number;
 }
