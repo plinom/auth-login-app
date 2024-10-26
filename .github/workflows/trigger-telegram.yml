@@ -12,7 +12,7 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           message: |
-            **New commit:** ${{ github.actor }}
-            **Commit:** ${{ github.event.head_commit.message }}
-            **Repository:** ${{ github.repository }}
-            **View changes:** [click](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+            <b>New commit:</b> ${{ github.actor }}
+            <b>Commit:</b> ${{ github.event.head_commit.message }}
+            <b>Repository:</b> ${{ github.repository }}
+            <b>View changes:</b> [click](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
