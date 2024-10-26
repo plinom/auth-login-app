@@ -4,6 +4,7 @@ import {
   Injectable,
   PipeTransform,
 } from '@nestjs/common';
+import { AvatarDto } from '../dto/avatar.dto';
 /**
  *
  *
@@ -16,16 +17,16 @@ export class MaxSizeAvatarPipe implements PipeTransform {
   /**
    *
    *
-   * @param {number} size
-   * @return {*}
+   * @param {AvatarDto} avatar
+   * @return {*}  {number}
    * @memberof MaxSizeAvatarPipe
    */
-  transform(size: number): number {
-    if (size > 60000)
+  transform(avatar: AvatarDto): number {
+    if (avatar.size > 50000)
       throw new HttpException(
-        'Validation failed (expected max size is 60 kb)',
+        'Validation failed (expected max size is 50 kb)',
         HttpStatus.UNPROCESSABLE_ENTITY
       );
-    return size;
+    return avatar.size;
   }
 }
