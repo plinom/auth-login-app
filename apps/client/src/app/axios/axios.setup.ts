@@ -1,11 +1,11 @@
-import axios from "axios"
-import { SigninServices } from '../SigninUtils/SigninServices/Signin.services'
-
+import axios from 'axios';
+import { SigninServices } from '../SigninUtils/SigninServices/Signin.services';
 
 export const axiosInstance = axios.create({
-  baseURL: 'http://' + process.env.SERVER_HOST + ':' + process.env.SERVER_PORT + '/',
+  baseURL:
+    'http://' + process.env.SERVER_HOST + ':' + process.env.SERVER_PORT + '/',
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
   withCredentials: true,
 });

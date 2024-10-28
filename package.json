@@ -3,19 +3,19 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "build": "nx run-many --target=build --all=true",
-    "server:serve:dev": "nx run server:serve:development",
-    "server:serve:prod": "nx run server:serve:production",
-    "server:build": "nx run server:build",
-    "client:serve:dev": "nx run client:serve:development",
-    "client:serve:prod": "nx run client:serve:production",
-    "client:build": "nx run client:build",
+    "build": "npx nx run-many --target=build --all=true",
+    "server:serve:dev": "npx nx run server:serve:development",
+    "server:serve:prod": "npx nx run server:serve:production",
+    "server:build": "npx nx run server:build",
+    "client:serve:dev": "npx nx run client:serve:development",
+    "client:serve:prod": "npx nx run client:serve:production",
+    "client:build": "npx nx run client:build",
     "migration:create": "prisma migrate dev --create-only",
     "migration:migrate:dev": "prisma migrate dev",
     "migration:migrate:prod": "prisma migrate deploy",
     "seed": "node prisma/seed.js",
-    "build:docker:client": "docker build -f apps/client/Dockerfile .",
-    "build:docker:server": "docker build -f apps/server/Dockerfile ."
+    "docker:build:client:dev": "npx nx run client:docker-build-dev",
+    "docker:build:client:prod": "npx nx run client:docker-build-prod"
   },
   "private": true,
   "dependencies": {

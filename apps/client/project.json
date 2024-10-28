@@ -4,7 +4,6 @@
   "sourceRoot": "apps/client",
   "projectType": "application",
   "tags": [],
-  "// targets": "to see all targets run: nx show project client --web",
   "targets": {
     "build": {
       "executor": "@nx/next:build",
@@ -23,16 +22,16 @@
       "executor": "@nx/next:server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "client:build:development",
+        "buildTarget": "client:serve:development",
         "dev": true
       },
       "configurations": {
         "development": {
-          "buildTarget": "client:build:development",
+          "buildTarget": "client:serve:development",
           "dev": true
         },
         "production": {
-          "buildTarget": "client:build:production",
+          "buildTarget": "client:serve:production",
           "dev": false
         }
       }
@@ -42,6 +41,14 @@
       "options": {
         "lintFilePatterns": ["apps/client/**/*.{ts,tsx,js,jsx}"]
       }
+    },
+    "docker-build-dev": {
+      "dependsOn": [],
+      "command": "docker build -f Dockerfile.client --build-arg ENV_FILE=../../.env.serve.dev ."
+    },
+    "docker-build-prod": {
+      "dependsOn": [],
+      "command": "docker build -f Dockerfile.client --build-arg ENV_FILE=../../.env.serve.prod ."
     }
   }
 }

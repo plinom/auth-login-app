@@ -1,0 +1,24 @@
+FROM node:20-alpine AS installer
+WORKDIR /usr/src/app
+COPY package.json ./
+RUN yarn install
+
+FROM node:20-alpine AS builder
+WORKDIR /usr/src/app
+COPY --from=installer /usr/src/app/node_modules ./node_modules
+COPY . .
+ARG ENV_FILE
+COPY ${ENV_FILE} .env
+RUN yarn run client:build
+
+FROM node:20-alpine AS runner
+WORKDIR /usr/src/app
+COPY --from=builder /usr/src/app/apps/client/public ./public
+COPY --from=builder /usr/src/app/dist/apps/client/.next/standalone ./
+COPY --from=builder /usr/src/app/dist/apps/client/.next/static ./.next/static
+
+EXPOSE 4200
+
+ENV PORT=4200
+
+ENTRYPOINT [ "node", "apps/client/server.js" ]

@@ -15,6 +15,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  console.log('Hash', process.env.LS_HASH);
   return (
     <html lang="en">
       <body className={inter.className}>
