@@ -12,6 +12,6 @@
   ],
   "compilerOptions": {
     "esModuleInterop": true,
-    "types": ["Multer"]
+    "types": []
   }
 }

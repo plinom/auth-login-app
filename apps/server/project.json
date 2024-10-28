@@ -41,6 +41,12 @@
       "options": {
         "jestConfig": "apps/server/jest.config.ts"
       }
+    },
+    "docker-build-dev": {
+      "command": "docker build -f Dockerfile.server --build-arg ENV_FILE=.env.dev ."
+    },
+    "docker-build-prod": {
+      "command": "docker build -f Dockerfile.server --build-arg ENV_FILE=.env.prod ."
     }
   }
 }

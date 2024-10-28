@@ -10,12 +10,15 @@
     "client:serve:dev": "npx nx run client:serve:development",
     "client:serve:prod": "npx nx run client:serve:production",
     "client:build": "npx nx run client:build",
+    "docker:build:client:dev": "npx nx run client:docker-build-dev",
+    "docker:build:client:prod": "npx nx run client:docker-build-prod",
+    "docker:build:server:dev": "npx nx run server:docker-build-dev",
+    "docker:build:server:prod": "npx nx run server:docker-build-prod",
     "migration:create": "prisma migrate dev --create-only",
     "migration:migrate:dev": "prisma migrate dev",
     "migration:migrate:prod": "prisma migrate deploy",
     "seed": "node prisma/seed.js",
-    "docker:build:client:dev": "npx nx run client:docker-build-dev",
-    "docker:build:client:prod": "npx nx run client:docker-build-prod"
+    "prepare": "husky"
   },
   "private": true,
   "dependencies": {
@@ -25,6 +28,7 @@
     "cache-manager": "^5.7.4",
     "class-transformer": "^0.5.1",
     "eslint": "~8.57.0",
+    "husky": "^9.1.6",
     "next": "^14.2.15",
     "passport": "^0.7.0",
     "prettier-plugin-organize-imports": "^4.1.0",
