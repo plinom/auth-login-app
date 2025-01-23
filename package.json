@@ -9,7 +9,8 @@
     "web:serve": "npx nx run web:serve:development",
     "web:build:development": "npx nx run web:build:development",
     "web:lint": "npx nx lint web",
-    "reset": "rm -rf .nx && npx nx reset"
+    "reset": "rm -rf .nx && npx nx reset",
+    "prepare": "husky"
   },
   "private": true,
   "devDependencies": {
