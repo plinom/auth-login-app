@@ -14,8 +14,20 @@
     ],
     "sharedGlobals": []
   },
-  "nxCloudId": "67321b5530ba37e689c018bd",
+  "nxCloudId": "67915e0d6a1c444aab72978d",
   "plugins": [
+    {
+      "plugin": "@nx/js/typescript",
+      "options": {
+        "typecheck": {
+          "targetName": "typecheck"
+        },
+        "build": {
+          "targetName": "build",
+          "configName": "tsconfig.lib.json"
+        }
+      }
+    },
     {
       "plugin": "@nx/next/plugin",
       "options": {
@@ -25,7 +37,12 @@
         "serveStaticTargetName": "serve-static"
       }
     },
-    { "plugin": "@nx/eslint/plugin", "options": { "targetName": "lint" } },
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      }
+    },
     {
       "plugin": "@nx/webpack/plugin",
       "options": {
@@ -36,13 +53,11 @@
     }
   ],
   "generators": {
-    "@nx/next": { "application": { "style": "css", "linter": "eslint" } }
-  },
-  "targetDefaults": {
-    "@nx/js:tsc": {
-      "cache": true,
-      "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
+    "@nx/next": {
+      "application": {
+        "style": "none",
+        "linter": "eslint"
+      }
     }
   }
 }

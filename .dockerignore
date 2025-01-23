@@ -1,5 +1,0 @@
-./server/dist
-./client/.next
-
-dist/
-node_modules/
