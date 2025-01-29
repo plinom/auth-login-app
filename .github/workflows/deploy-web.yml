@@ -1,4 +1,4 @@
-name: Build, Deploy, and Notify to Telegram (api)
+name: Build, Deploy, and Notify to Telegram (web)
 
 on:
   push:
@@ -7,9 +7,9 @@ on:
 
 env:
   AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
-  ECR_API_IMAGE: ${{ vars.ECR_API_IMAGE }}
+  ECR_WEB_IMAGE: ${{ vars.ECR_WEB_IMAGE }}
   ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
-  ECS_API_SERVICE: ${{ vars.ECS_API_SERVICE }}
+  ECS_WEB_SERVICE: ${{ vars.ECS_WEB_SERVICE }}
   TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
   TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
@@ -42,14 +42,14 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t $ECR_API_IMAGE -f Dockerfile.api .
-          docker tag $ECR_API_IMAGE:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_API_IMAGE:latest
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_API_IMAGE:latest
+          docker build -t $ECR_WEB_IMAGE -f Dockerfile.web .
+          docker tag $ECR_WEB_IMAGE:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_WEB_IMAGE:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_WEB_IMAGE:latest
 
       - name: Deploy to ECS
         uses: imehedi/actions-awscli-v2@latest
         with:
-          args: ecs update-service --cluster $ECS_CLUSTER --service $ECS_API_SERVICE --force-new-deployment
+          args: ecs update-service --cluster $ECS_CLUSTER --service $ECS_WEB_SERVICE --force-new-deployment
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -63,7 +63,7 @@ jobs:
           message: |
             🎉 *Deployment Successful!* 🎉
             
-            🚀 *Api App has been deployed successfully!*
+            🚀 *Web App has been deployed successfully!*
             📂 *Repository:* `${{ github.repository }}`
             
             🔍 [View Changes](https://github.com/${{ github.repository }}/commit/${{ github.sha }}) 🔍
