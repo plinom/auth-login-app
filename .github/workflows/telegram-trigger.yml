@@ -2,7 +2,8 @@ name: Telegram Trigger Workflow
 
 on:
   push:
-    branches: [polinom]
+    branches:
+      - polinom
 
 jobs:
   send-inline-message:
