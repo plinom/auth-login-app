@@ -1,23 +1,38 @@
 import { Button, TextField } from '@mui/material';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { useSnackbar } from 'notistack';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
-import { auth } from '../configs/firebase.config';
+import { auth as firebaseAuth } from '../configs/firebase.config';
 import { ISignIn } from '../interfaces/sign-in.interface';
 import { FormWrapper } from './form-wrapper.component';
 
 export const SignInForm = () => {
-  const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
   const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
   const {
     control,
     formState: { errors },
     handleSubmit,
   } = useForm<ISignIn>({ mode: 'onChange' });
   const onSubmit: SubmitHandler<ISignIn> = async (data) => {
-    await signInWithEmailAndPassword(data.email, data.password);
-    router.push('msg');
+    try {
+      await signInWithEmailAndPassword(
+        firebaseAuth,
+        data.email,
+        data.password,
+      );
+
+      enqueueSnackbar('Signed in successfully', { variant: 'success' });
+
+      router.push('msg');
+    } catch (err) {
+      console.error(err);
+      enqueueSnackbar('Something went wrong', {
+        variant: 'error',
+      });
+    }
   };
   return (
     <FormWrapper onSubmit={handleSubmit(onSubmit)}>

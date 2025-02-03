@@ -18,9 +18,9 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={roboto.className}>
-        <MuiUiProvider>
-          <NotistackProvider>{children}</NotistackProvider>
-        </MuiUiProvider>
+          <MuiUiProvider>
+            <NotistackProvider>{children}</NotistackProvider>
+          </MuiUiProvider>
       </body>
     </html>
   );

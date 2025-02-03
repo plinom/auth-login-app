@@ -1,5 +1,8 @@
 import { Button, TextField } from '@mui/material';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useSnackbar } from 'notistack';
 import { FC } from 'react';
@@ -21,13 +24,24 @@ export const SignUpForm: FC = () => {
 
   const onSubmit: SubmitHandler<ISignUp> = async (data) => {
     try {
-      await createUserWithEmailAndPassword(auth, data.email, data.password);
-      reset();
-      enqueueSnackbar('Sign up successful', {
+      const credentials = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password,
+      );
+
+      const signUpUser = credentials.user;
+
+      await sendEmailVerification(signUpUser);
+
+      enqueueSnackbar('Check email', {
         variant: 'success',
       });
+
       router.push('sign-in');
+      reset();
     } catch (err) {
+      console.error(err);
       enqueueSnackbar('Something went wrong', {
         variant: 'error',
       });
