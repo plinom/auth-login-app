@@ -1,3 +1,0 @@
-npm run reset
-npm run api:build:development
-npm run web:build:development
