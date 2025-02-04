@@ -1,6 +1,7 @@
 import { INestApplication, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app/app.module';
 import { API_CONFIG } from './common/configs/api.config';
@@ -21,10 +22,34 @@ async function bootstrap() {
   const apiPortNumber = apiPort ? parseInt(apiPort, 10) : 3000;
 
   app.enableCors({
-    allowedHeaders: ['my-custom-header'],
-    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     origin: [`http://${webHost}:${webPortNumber}`],
+  });
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('MSG api')
+    .setDescription('MSG api description')
+    .setVersion('0.0.1')
+    .addServer(
+      `http://${config.get<string>(`${API_CONFIG}.apiHost`)}:${config.get<string>(
+        `${API_CONFIG}.apiPort`,
+      )}/`,
+      'Local environment',
+    )
+    .addBearerAuth({
+      bearerFormat: 'JWT',
+      description: 'Enter your Bearer token',
+      in: 'header',
+      name: 'Authorization',
+      scheme: 'bearer',
+      type: 'http',
+    })
+    .addSecurityRequirements('bearer')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('/', app, document, {
+    customSiteTitle: 'MSG api',
   });
 
   await app.listen(apiPortNumber);

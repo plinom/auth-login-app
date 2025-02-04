@@ -8,7 +8,13 @@ import {
 } from '@nestjs/websockets';
 import { Model } from 'mongoose';
 import { Server, Socket } from 'socket.io';
-import { Chat } from 'src/app/schemas/chat.schema';
+import { Chat } from 'src/common/schemas/chat.schema';
+
+interface Message {
+  message: string;
+  room: string;
+  sender: string;
+}
 
 @WebSocketGateway({
   cors: {
@@ -31,7 +37,10 @@ export class ChatGateway {
 
     client.join(room);
 
-    this.server.to(room).emit('message', `${client.id} joined ${room}`);
+    this.server.to(room).emit('message', {
+      message: `${client.id} joined ${room}`,
+      sender: 'System',
+    });
   }
 
   @SubscribeMessage('leaveRoom')
@@ -43,13 +52,14 @@ export class ChatGateway {
 
     client.leave(room);
 
-    this.server.to(room).emit('message', `${client.id} left ${room}`);
+    this.server.to(room).emit('message', {
+      message: `${client.id} left ${room}`,
+      sender: 'System',
+    });
   }
 
   @SubscribeMessage('message')
-  async handleMessage(
-    @MessageBody() data: { message: string; room: string; sender: string },
-  ): Promise<void> {
+  async handleMessage(@MessageBody() data: Message): Promise<void> {
     const { message, room, sender } = data;
 
     const newMessage = new this.chatModel({ message, room, sender });

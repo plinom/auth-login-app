@@ -1,7 +1,9 @@
 import { Button, TextField } from '@mui/material';
+import { useMutation } from '@tanstack/react-query';
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  UserCredential,
 } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useSnackbar } from 'notistack';
@@ -11,6 +13,31 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { auth } from '../configs/firebase.config';
 import { ISignUp } from '../interfaces/sign-up.interface';
 import { FormWrapper } from './form-wrapper.component';
+
+const signUpUser = async (data: ISignUp): Promise<void> => {
+  const response = await fetch('http://localhost:3001/users/sign-up', {
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    method: 'POST',
+  });
+
+  if (!response.ok) throw new Error('Faild to sign up');
+
+  return response.json();
+};
+
+const signUpFirebaseUser = async (data: ISignUp): Promise<UserCredential> => {
+  const credentials = await createUserWithEmailAndPassword(
+    auth,
+    data.email,
+    data.password,
+  );
+  await sendEmailVerification(credentials.user);
+
+  return credentials;
+};
 
 export const SignUpForm: FC = () => {
   const router = useRouter();
@@ -22,30 +49,28 @@ export const SignUpForm: FC = () => {
     reset,
   } = useForm<ISignUp>({ mode: 'onChange' });
 
-  const onSubmit: SubmitHandler<ISignUp> = async (data) => {
-    try {
-      const credentials = await createUserWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password,
-      );
-
-      const signUpUser = credentials.user;
-
-      await sendEmailVerification(signUpUser);
-
-      enqueueSnackbar('Check email', {
+  const mutation = useMutation({
+    mutationFn: async (data: ISignUp) => {
+      const credentials = await signUpFirebaseUser(data);
+      console.log('Token: ', credentials.user.getIdToken());
+      await signUpUser({ ...data, id: credentials.user.uid });
+      return credentials;
+    },
+    onError: (error) => {
+      console.error(error);
+      enqueueSnackbar('Something went wrong', { variant: 'error' });
+    },
+    onSuccess: () => {
+      enqueueSnackbar('Check your email for verification', {
         variant: 'success',
       });
-
       router.push('sign-in');
       reset();
-    } catch (err) {
-      console.error(err);
-      enqueueSnackbar('Something went wrong', {
-        variant: 'error',
-      });
-    }
+    },
+  });
+
+  const onSubmit: SubmitHandler<ISignUp> = async (data) => {
+    mutation.mutate(data);
   };
 
   return (
