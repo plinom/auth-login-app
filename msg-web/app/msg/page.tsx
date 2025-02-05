@@ -1,7 +1,7 @@
 'use client';
 
-// import { Test } from '@/src/components/test.component';
-import { Chat } from '@/src/components/chat.component';
+// import { Chat } from '@/src/components/chat.component';
+import { Test } from '@/src/components/test.component';
 import { withAuth } from '@/src/hocs/with-auth.hoc';
 import { User } from 'firebase/auth';
 import { FC } from 'react';
@@ -14,8 +14,8 @@ interface Props {
 const Page: FC<Props> = ({ token, user }) => {
   return (
     <>
-      {/* <Test token={token} user={user} /> */}
-      <Chat />
+      <Test token={token} user={user} />
+      {/* <Chat /> */}
     </>
   );
 };
