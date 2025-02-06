@@ -3,12 +3,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ChatModule } from 'src/app/chat/chat.module';
 import { FirebaseAdminModule } from 'src/app/firebase-admin/firebase-admin.module';
-import firebaseAdminConfig from 'src/common/configs/firebase-admin.config';
-import mongoDbConfig, {
-  MONGO_CONFIG,
-} from 'src/common/configs/mongo-db.config';
 
 import apiConfig from '../common/configs/api.config';
+import firebaseAdminConfig from '../common/configs/firebase-admin.config';
+import mongoDbConfig, { MONGO_CONFIG } from '../common/configs/mongo-db.config';
 import webConfig from '../common/configs/web.config';
 import { UsersModule } from './users/users.module';
 
