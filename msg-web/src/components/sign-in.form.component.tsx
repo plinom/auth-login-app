@@ -1,12 +1,58 @@
 import { Button, TextField } from '@mui/material';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useMutation } from '@tanstack/react-query';
+import {
+  sendEmailVerification,
+  signInWithEmailAndPassword,
+  UserCredential,
+} from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { useSnackbar } from 'notistack';
+import { enqueueSnackbar, useSnackbar } from 'notistack';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
-import { auth as firebaseAuth } from '../configs/firebase.config';
+import { auth } from '../configs/firebase.config';
 import { ISignIn } from '../interfaces/sign-in.interface';
 import { FormWrapper } from './form-wrapper.component';
+
+const signInUser = async (data: ISignIn, token: string): Promise<number> => {
+  const response = await fetch(
+    `http://${process.env.API_HOST}:${process.env.API_PORT}/users/sign-in`,
+    {
+      body: JSON.stringify(data),
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+    },
+  );
+
+  if (!response.ok) throw new Error('Faild to sign in');
+
+  return response.status;
+};
+
+const signInFirebaseUser = async (data: ISignIn): Promise<UserCredential> => {
+  try {
+    const credentials = await signInWithEmailAndPassword(
+      auth,
+      data.email,
+      data.password,
+    );
+
+    if (!credentials.user.emailVerified) {
+      await sendEmailVerification(credentials.user);
+      enqueueSnackbar(
+        'Email not verified. A verification email has been sent.',
+        { variant: 'warning' },
+      );
+    }
+
+    return credentials;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Something went wrong during sign in.');
+  }
+};
 
 export const SignInForm = () => {
   const router = useRouter();
@@ -15,24 +61,29 @@ export const SignInForm = () => {
     control,
     formState: { errors },
     handleSubmit,
+    reset,
   } = useForm<ISignIn>({ mode: 'onChange' });
-  const onSubmit: SubmitHandler<ISignIn> = async (data) => {
-    try {
-      await signInWithEmailAndPassword(
-        firebaseAuth,
-        data.email,
-        data.password,
-      );
 
-      enqueueSnackbar('Signed in successfully', { variant: 'success' });
+  const mutation = useMutation({
+    mutationFn: async (data: ISignIn) => {
+      const credentials = await signInFirebaseUser(data);
 
+      const token: string = await credentials.user.getIdToken();
+      await signInUser(data, token);
+      return credentials;
+    },
+    onError: (error) => {
+      enqueueSnackbar((error as Error).message, { variant: 'error' });
+    },
+    onSuccess: () => {
+      enqueueSnackbar('Sign in success', { variant: 'success' });
       router.push('msg');
-    } catch (err) {
-      console.error(err);
-      enqueueSnackbar('Something went wrong', {
-        variant: 'error',
-      });
-    }
+      reset();
+    },
+  });
+
+  const onSubmit: SubmitHandler<ISignIn> = async (data) => {
+    mutation.mutate(data);
   };
   return (
     <FormWrapper onSubmit={handleSubmit(onSubmit)}>

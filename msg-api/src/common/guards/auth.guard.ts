@@ -41,7 +41,7 @@ export class AuthGuard implements CanActivate {
       if (!user)
         throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
 
-      request.user = user;
+      request.user = user.id;
 
       return true;
     } catch (err) {

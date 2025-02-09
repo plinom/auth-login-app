@@ -1,5 +1,6 @@
 import { Button, TextField } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
+import { FirebaseError } from 'firebase/app';
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
@@ -15,13 +16,16 @@ import { ISignUp } from '../interfaces/sign-up.interface';
 import { FormWrapper } from './form-wrapper.component';
 
 const signUpUser = async (data: ISignUp): Promise<void> => {
-  const response = await fetch('http://localhost:3001/users/sign-up', {
-    body: JSON.stringify(data),
-    headers: {
-      'Content-Type': 'application/json',
+  const response = await fetch(
+    `http://${process.env.API_HOST}:${process.env.API_PORT}/users/sign-up`,
+    {
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
     },
-    method: 'POST',
-  });
+  );
 
   if (!response.ok) throw new Error('Faild to sign up');
 
@@ -29,14 +33,35 @@ const signUpUser = async (data: ISignUp): Promise<void> => {
 };
 
 const signUpFirebaseUser = async (data: ISignUp): Promise<UserCredential> => {
-  const credentials = await createUserWithEmailAndPassword(
-    auth,
-    data.email,
-    data.password,
-  );
-  await sendEmailVerification(credentials.user);
+  try {
+    const credentials = await createUserWithEmailAndPassword(
+      auth,
+      data.email,
+      data.password,
+    );
+    await sendEmailVerification(credentials.user);
 
-  return credentials;
+    return credentials;
+  } catch (error) {
+    if (error instanceof FirebaseError) {
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          throw new Error(
+            'The email address is already in use by another account.',
+          );
+        case 'auth/invalid-email':
+          throw new Error('The email address is not valid.');
+        case 'auth/operation-not-allowed':
+          throw new Error('Email/password accounts are not enabled.');
+        case 'auth/weak-password':
+          throw new Error('The password is too weak.');
+        default:
+          throw new Error('Something went wrong during sign up.');
+      }
+    } else {
+      throw new Error('Something went wrong during sign up.');
+    }
+  }
 };
 
 export const SignUpForm: FC = () => {
@@ -52,13 +77,11 @@ export const SignUpForm: FC = () => {
   const mutation = useMutation({
     mutationFn: async (data: ISignUp) => {
       const credentials = await signUpFirebaseUser(data);
-      console.log('Token: ', credentials.user.getIdToken());
       await signUpUser({ ...data, id: credentials.user.uid });
       return credentials;
     },
     onError: (error) => {
-      console.error(error);
-      enqueueSnackbar('Something went wrong', { variant: 'error' });
+      enqueueSnackbar((error as Error).message, { variant: 'error' });
     },
     onSuccess: () => {
       enqueueSnackbar('Check your email for verification', {

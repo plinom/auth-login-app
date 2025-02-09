@@ -8,11 +8,12 @@ import {
 } from '@nestjs/websockets';
 import { Model } from 'mongoose';
 import { Server, Socket } from 'socket.io';
-import { Chat } from 'src/common/schemas/chat.schema';
+import { User } from 'src/common/schemas/user.schema';
 
 interface Message {
   message: string;
-  room: string;
+  receiver?: string;
+  room?: string;
   sender: string;
 }
 
@@ -26,13 +27,13 @@ interface Message {
 export class ChatGateway {
   @WebSocketServer() server: Server;
 
-  constructor(@InjectModel('Chat') private chatModel: Model<Chat>) {}
+  constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
 
   @SubscribeMessage('joinRoom')
-  handleJoinRoom(
+  async handleJoinRoom(
     @MessageBody() data: { room: string },
     @ConnectedSocket() client: Socket,
-  ): void {
+  ): Promise<void> {
     const { room } = data;
 
     client.join(room);
@@ -44,10 +45,10 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('leaveRoom')
-  handleLeaveRoom(
+  async handleLeaveRoom(
     @MessageBody() data: { room: string },
     @ConnectedSocket() client: Socket,
-  ): void {
+  ): Promise<void> {
     const { room } = data;
 
     client.leave(room);
@@ -60,12 +61,6 @@ export class ChatGateway {
 
   @SubscribeMessage('message')
   async handleMessage(@MessageBody() data: Message): Promise<void> {
-    const { message, room, sender } = data;
-
-    const newMessage = new this.chatModel({ message, room, sender });
-
-    await newMessage.save();
-
-    this.server.to(room).emit('message', newMessage);
+    const { message, receiver, room, sender } = data;
   }
 }
