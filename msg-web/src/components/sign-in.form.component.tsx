@@ -77,7 +77,7 @@ export const SignInForm = () => {
     },
     onSuccess: () => {
       enqueueSnackbar('Sign in success', { variant: 'success' });
-      router.push('msg');
+      router.push('select-room');
       reset();
     },
   });

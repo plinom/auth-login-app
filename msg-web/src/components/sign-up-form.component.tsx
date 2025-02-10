@@ -100,38 +100,40 @@ export const SignUpForm: FC = () => {
     <FormWrapper onSubmit={handleSubmit(onSubmit)}>
       <Controller
         control={control}
-        name='firstName'
+        name='fullName'
         render={({ field: { onChange, value } }) => (
           <TextField
-            error={!!errors.firstName}
+            error={!!errors.fullName}
             fullWidth
-            helperText={errors.firstName?.message}
-            label='First name'
+            helperText={errors.fullName?.message}
+            label='Full name'
             onChange={onChange}
+            placeholder='Your full name'
             size='small'
             value={value ?? ''}
             variant='outlined'
           />
         )}
-        rules={{ required: 'First name is required' }}
+        rules={{ required: 'Full name is required' }}
       />
 
       <Controller
         control={control}
-        name='lastName'
+        name='username'
         render={({ field: { onChange, value } }) => (
           <TextField
-            error={!!errors.lastName}
+            error={!!errors.username}
             fullWidth
-            helperText={errors.lastName?.message}
-            label='Last name'
+            helperText={errors.username?.message}
+            label='Username'
             onChange={onChange}
+            placeholder='Your username'
             size='small'
             value={value ?? ''}
             variant='outlined'
           />
         )}
-        rules={{ required: 'Last name is required' }}
+        rules={{ required: 'Username is required' }}
       />
 
       <Controller

@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ChatModule } from 'src/app/chat/chat.module';
 import { FirebaseAdminModule } from 'src/app/firebase-admin/firebase-admin.module';
 
 import apiConfig from '../common/configs/api.config';
 import firebaseAdminConfig from '../common/configs/firebase-admin.config';
 import mongoDbConfig, { MONGO_CONFIG } from '../common/configs/mongo-db.config';
 import webConfig from '../common/configs/web.config';
+import { MessageModule } from './messages/messages.module';
+import { RoomsModule } from './rooms/rooms.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -24,8 +25,9 @@ import { UsersModule } from './users/users.module';
       }),
     }),
     UsersModule,
-    ChatModule,
     FirebaseAdminModule,
+    RoomsModule,
+    MessageModule,
   ],
 })
 export class AppModule {}

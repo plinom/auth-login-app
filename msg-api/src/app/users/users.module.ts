@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserSchema } from 'src/common/schemas/user.schema';
 
 import { FirebaseAdminModule } from '../firebase-admin/firebase-admin.module';
+import { User, UserSchema } from '../users/schema/user.schema';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
@@ -10,7 +10,7 @@ import { UsersService } from './users.service';
   controllers: [UsersController],
   exports: [UsersService],
   imports: [
-    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     FirebaseAdminModule,
   ],
   providers: [UsersService],

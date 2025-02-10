@@ -20,15 +20,15 @@ export class SignUpUserDto {
   email: string;
 
   @ApiProperty({
-    description: 'First name',
-    example: 'firstName',
-    name: 'firstName',
+    description: 'Full name',
+    example: 'Bob Vilson',
+    name: 'fullName',
     required: true,
     type: 'string',
   })
   @IsNotEmpty()
   @IsString()
-  firstName: string;
+  fullName: string;
 
   @ApiProperty({
     description: 'Id',
@@ -40,17 +40,6 @@ export class SignUpUserDto {
   @IsNotEmpty()
   @IsString()
   id: string;
-
-  @ApiProperty({
-    description: 'Last name',
-    example: 'lastName',
-    name: 'lastName',
-    required: true,
-    type: 'string',
-  })
-  @IsNotEmpty()
-  @IsString()
-  lastName: string;
 
   @ApiProperty({
     description: 'Password',
@@ -67,4 +56,15 @@ export class SignUpUserDto {
       'Password too weak. It must contain at least one uppercase letter, one lowercase letter, and one number.',
   })
   password: string;
+
+  @ApiProperty({
+    description: 'bob_vilson',
+    example: 'username',
+    name: 'username',
+    required: true,
+    type: 'string',
+  })
+  @IsNotEmpty()
+  @IsString()
+  username: string;
 }

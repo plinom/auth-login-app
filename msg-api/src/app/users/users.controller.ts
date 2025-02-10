@@ -9,8 +9,8 @@ import {
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { AuthGuard } from '../../common/guards/auth.guard';
-import { User } from '../../common/schemas/user.schema';
 import { SignUpUserDto } from './dto/sign-up-user.dto';
+import { User } from './schema/user.schema';
 import { UsersService } from './users.service';
 
 @ApiTags('users')
