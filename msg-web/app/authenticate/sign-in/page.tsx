@@ -79,8 +79,7 @@ export default function Page() {
     },
     onSuccess: () => {
       enqueueSnackbar('Sign in success', { variant: 'success' });
-      router.refresh();
-      router.push('/msg/select-room');
+      router.push('/msg/chats');
       reset();
     },
   });
