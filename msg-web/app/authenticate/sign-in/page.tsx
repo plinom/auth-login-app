@@ -1,3 +1,8 @@
+'use client';
+
+import { FormWrapper } from '@/src/components/form-wrapper.component';
+import { auth } from '@/src/configs/firebase.config';
+import { ISignIn } from '@/src/interfaces/sign-in.interface';
 import { Button, TextField } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import {
@@ -8,10 +13,6 @@ import {
 import { useRouter } from 'next/navigation';
 import { enqueueSnackbar, useSnackbar } from 'notistack';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-
-import { auth } from '../configs/firebase.config';
-import { ISignIn } from '../interfaces/sign-in.interface';
-import { FormWrapper } from './form-wrapper.component';
 
 const signInUser = async (data: ISignIn, token: string): Promise<number> => {
   const response = await fetch(
@@ -54,7 +55,7 @@ const signInFirebaseUser = async (data: ISignIn): Promise<UserCredential> => {
   }
 };
 
-export const SignInForm = () => {
+export default function Page() {
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const {
@@ -78,7 +79,8 @@ export const SignInForm = () => {
     },
     onSuccess: () => {
       enqueueSnackbar('Sign in success', { variant: 'success' });
-      router.push('select-room');
+      router.refresh();
+      router.push('/msg/select-room');
       reset();
     },
   });
@@ -142,4 +144,4 @@ export const SignInForm = () => {
       </Button>
     </FormWrapper>
   );
-};
+}

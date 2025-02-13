@@ -1,3 +1,8 @@
+'use client';
+
+import { FormWrapper } from '@/src/components/form-wrapper.component';
+import { auth } from '@/src/configs/firebase.config';
+import { ISignUp } from '@/src/interfaces/sign-up.interface';
 import { Button, TextField } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { FirebaseError } from 'firebase/app';
@@ -8,12 +13,7 @@ import {
 } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useSnackbar } from 'notistack';
-import { FC } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-
-import { auth } from '../configs/firebase.config';
-import { ISignUp } from '../interfaces/sign-up.interface';
-import { FormWrapper } from './form-wrapper.component';
 
 const signUpUser = async (data: ISignUp): Promise<void> => {
   const response = await fetch(
@@ -64,7 +64,7 @@ const signUpFirebaseUser = async (data: ISignUp): Promise<UserCredential> => {
   }
 };
 
-export const SignUpForm: FC = () => {
+export default function Page() {
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const {
@@ -95,7 +95,6 @@ export const SignUpForm: FC = () => {
   const onSubmit: SubmitHandler<ISignUp> = async (data) => {
     mutation.mutate(data);
   };
-
   return (
     <FormWrapper onSubmit={handleSubmit(onSubmit)}>
       <Controller
@@ -213,4 +212,4 @@ export const SignUpForm: FC = () => {
       </Button>
     </FormWrapper>
   );
-};
+}

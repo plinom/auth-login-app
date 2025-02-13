@@ -8,11 +8,11 @@ export default function Page() {
   const router = useRouter();
 
   const handleSignUp = useCallback(() => {
-    router.push('sign-up');
+    router.push('authenticate/sign-up');
   }, [router]);
 
   const handleSignIn = useCallback(() => {
-    router.push('sign-in');
+    router.push('authenticate/sign-in');
   }, [router]);
   return (
     <>

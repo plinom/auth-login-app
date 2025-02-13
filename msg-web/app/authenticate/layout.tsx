@@ -1,9 +1,11 @@
-'use client';
-
-import { SignInForm } from '@/src/components/sign-in.form.component';
 import { Box } from '@mui/material';
+import { ReactNode } from 'react';
 
-export default function Page() {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: ReactNode;
+}>) {
   return (
     <Box
       sx={{
@@ -17,7 +19,7 @@ export default function Page() {
         width: '100%',
       }}
     >
-      <SignInForm />
+      {children}
     </Box>
   );
 }
