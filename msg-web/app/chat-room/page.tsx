@@ -1,14 +1,12 @@
 'use client';
 
+import { socket } from '@/src/configs/socket.config';
 import { withAuth } from '@/src/hocs/with-auth.hoc';
 import { IMessage } from '@/src/interfaces/message.interface';
 import { Button, Container, TextField, Typography } from '@mui/material';
 import { User } from 'firebase/auth';
 import { useSearchParams } from 'next/navigation';
-import { FC, useEffect, useState } from 'react';
-import io from 'socket.io-client';
-
-const socket = io(`http://${process.env.API_HOST}:${process.env.API_PORT}`);
+import { FC, useCallback, useEffect, useState } from 'react';
 
 interface Props {
   token: string;
@@ -18,30 +16,50 @@ interface Props {
 const Page: FC<Props> = ({ token, user }) => {
   const searchParams = useSearchParams();
   const roomId = searchParams.get('room');
+
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [message, setMessage] = useState<string>('');
 
+  const handleNewMessage = useCallback((newMessage: IMessage) => {
+    setMessages((prev) => [...prev, newMessage]);
+  }, []);
+
+  const handleExistingMessages = useCallback((existingMessages: IMessage[]) => {
+    setMessages(existingMessages);
+  }, []);
+
   useEffect(() => {
-    console.log(token, user.email);
+    if (!roomId) return;
+    console.log(token, user.email, roomId);
 
-    socket.emit('enter-chat-room', { roomId: roomId, userId: user.uid });
+    socket.emit('enter-chat-room', { firebaseId: user.uid, roomId: roomId });
 
-    socket.on('message', (newMessage: IMessage) => {
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-    });
+    socket.on('message', handleNewMessage);
+    socket.on('existing-messages', handleExistingMessages);
 
     return () => {
-      socket.emit('leave-chat-room', { roomId: roomId, userId: user.uid });
-      setMessage('');
+      socket.off('message', handleNewMessage);
+      socket.off('existing-messages', handleExistingMessages);
+      socket.emit('leave-chat-room', { firebaseId: user.uid, roomId: roomId });
+      setMessages([]);
     };
-  }, [roomId, token, user.email, user.uid]);
+  }, [
+    handleExistingMessages,
+    handleNewMessage,
+    roomId,
+    token,
+    user.email,
+    user.uid,
+  ]);
 
   const sendMessage = () => {
+    if (!message.trim()) return;
     socket.emit('add-message', {
-      room: roomId,
+      firebaseId: user.uid,
+      roomId: roomId,
       text: message,
-      userId: user.uid,
     });
+    setMessage('');
   };
 
   return (
@@ -49,7 +67,7 @@ const Page: FC<Props> = ({ token, user }) => {
       <Typography variant='h4'>Room: {roomId}</Typography>
       {messages.map((msg, index) => (
         <div key={index}>
-          <strong>{user.uid}:</strong> {msg.text}
+          <strong>{msg.ownerId}:</strong> {msg.text}
         </div>
       ))}
       <TextField
@@ -59,7 +77,11 @@ const Page: FC<Props> = ({ token, user }) => {
         value={message}
         variant='outlined'
       />
-      <Button disabled={!message} onClick={sendMessage} variant='contained'>
+      <Button
+        disabled={!message.trim()}
+        onClick={sendMessage}
+        variant='contained'
+      >
         Send
       </Button>
     </Container>

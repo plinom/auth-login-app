@@ -1,8 +1,7 @@
-import { User } from 'firebase/auth';
-
 export interface IRoom {
   _id?: string;
-  connectedUsers?: User[];
-  messages?: string;
-  name?: string;
+  connectedUsersIds: string[];
+  createdBy: string;
+  messages: string[];
+  name: string;
 }

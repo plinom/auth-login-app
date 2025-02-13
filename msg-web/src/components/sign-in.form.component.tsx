@@ -69,6 +69,7 @@ export const SignInForm = () => {
       const credentials = await signInFirebaseUser(data);
 
       const token: string = await credentials.user.getIdToken();
+      console.log(token);
       await signInUser(data, token);
       return credentials;
     },

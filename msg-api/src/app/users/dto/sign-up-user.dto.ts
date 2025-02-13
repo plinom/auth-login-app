@@ -20,6 +20,17 @@ export class SignUpUserDto {
   email: string;
 
   @ApiProperty({
+    description: 'firebase id',
+    example: 'mdkfnjrnflmkrjrnfjrnf',
+    name: 'firebaseId',
+    required: true,
+    type: 'string',
+  })
+  @IsNotEmpty()
+  @IsString()
+  firebaseId: string;
+
+  @ApiProperty({
     description: 'Full name',
     example: 'Bob Vilson',
     name: 'fullName',
@@ -29,17 +40,6 @@ export class SignUpUserDto {
   @IsNotEmpty()
   @IsString()
   fullName: string;
-
-  @ApiProperty({
-    description: 'Id',
-    example: 'id',
-    name: 'id',
-    required: true,
-    type: 'string',
-  })
-  @IsNotEmpty()
-  @IsString()
-  id: string;
 
   @ApiProperty({
     description: 'Password',

@@ -77,7 +77,7 @@ export const SignUpForm: FC = () => {
   const mutation = useMutation({
     mutationFn: async (data: ISignUp) => {
       const credentials = await signUpFirebaseUser(data);
-      await signUpUser({ ...data, id: credentials.user.uid });
+      await signUpUser({ ...data, firebaseId: credentials.user.uid });
       return credentials;
     },
     onError: (error) => {

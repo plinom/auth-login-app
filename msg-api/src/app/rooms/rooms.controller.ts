@@ -23,19 +23,19 @@ export class RoomsController {
 
   @Post()
   async createNewRoom(
-    @User() userId: string,
+    @User() firebaseId: string,
     @Body() createRoomDto: CreateRoomDto,
   ): Promise<void> {
-    return await this.roomsService.newRoom(userId, createRoomDto);
+    return await this.roomsService.createRoom(firebaseId, createRoomDto);
   }
 
   @Get()
   async find(@Query('search') search: string): Promise<Room[]> {
-    return await this.roomsService.getRooms(search);
+    return await this.roomsService.getAllBySearchParam(search);
   }
 
   @Get('/:id')
   async findById(@Param('roomId') roomId: string): Promise<Room> {
-    return await this.roomsService.findRoomById(roomId);
+    return await this.roomsService.findById(roomId);
   }
 }

@@ -1,8 +1,8 @@
 export interface ISignUp {
   confirmPassword: string;
   email: string;
+  firebaseId: string;
   fullName: string;
-  id: string;
   password: string;
   username: string;
 }

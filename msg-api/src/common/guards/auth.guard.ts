@@ -36,14 +36,12 @@ export class AuthGuard implements CanActivate {
       const request = context.switchToHttp().getRequest();
       const firebaseUser = await this.firebaseAdminService.verifyToken(token);
 
-      const user = await this.usersService.findUserByFirebaseid(
-        firebaseUser.uid,
-      );
+      const user = await this.usersService.findByFirebaseId(firebaseUser.uid);
 
       if (!user)
         throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
 
-      request.user = user.id;
+      request.user = user.firebaseId;
 
       return true;
     } catch (err) {

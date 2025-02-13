@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId, Schema } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { User } from 'src/app/users/schema/user.schema';
 
 import { SignUpUserDto } from './dto/sign-up-user.dto';
@@ -9,17 +9,17 @@ import { SignUpUserDto } from './dto/sign-up-user.dto';
 export class UsersService {
   constructor(@InjectModel('User') private usersModel: Model<User>) {}
 
-  async findUserByClientId(id: string): Promise<User> {
+  async findByClientId(clientId: string): Promise<User> {
     const user = await this.usersModel.findOne({
-      clientId: id,
+      clientId: clientId,
     });
 
     return user;
   }
 
-  async findUserByFirebaseid(id: string): Promise<User> {
+  async findByFirebaseId(firebaseId: string): Promise<User> {
     const user = await this.usersModel.findOne({
-      id: id,
+      firebaseId: firebaseId,
     });
 
     return user;
@@ -31,20 +31,39 @@ export class UsersService {
     return user.save();
   }
 
-  async updateClientId(id: Schema.Types.ObjectId, user: User): Promise<void> {
-    await this.usersModel.findByIdAndUpdate(
+  async updateClientId(firebaseId: string, clientId: string): Promise<void> {
+    await this.usersModel.findOneAndUpdate(
       {
-        _id: id,
+        firebaseId: firebaseId,
       },
-      user,
+      {
+        clientId: clientId,
+      },
     );
   }
 
-  async updateJoinedRooms(userId: string, roomId: ObjectId): Promise<void> {
+  async updateJoinedRooms(
+    firebaseId: string,
+    roomId: Types.ObjectId,
+  ): Promise<void> {
     await this.usersModel.findOneAndUpdate(
-      { id: userId },
+      { firebaseId: firebaseId },
       {
         $push: { rooms: roomId },
+      },
+    );
+  }
+
+  async updateMessages(
+    firebaseId: string,
+    messageId: Types.ObjectId,
+  ): Promise<void> {
+    await this.usersModel.findOneAndUpdate(
+      {
+        firebaseId: firebaseId,
+      },
+      {
+        $push: { messages: messageId },
       },
     );
   }

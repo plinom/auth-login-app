@@ -1,18 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ObjectId, Types } from 'mongoose';
+import { Types } from 'mongoose';
 
-@Schema()
+@Schema({ timestamps: true })
 export class Message {
-  _id: ObjectId;
+  _id: Types.ObjectId;
 
-  @Prop({ required: true })
-  created: Date;
-
-  @Prop({ ref: 'User', required: true, type: String })
-  ownerId: string;
+  @Prop({ ref: 'User', required: true, type: Types.ObjectId })
+  ownerId: Types.ObjectId;
 
   @Prop({ ref: 'Room', required: true, type: Types.ObjectId })
-  roomId: ObjectId;
+  roomId: Types.ObjectId;
 
   @Prop({ required: true })
   text: string;

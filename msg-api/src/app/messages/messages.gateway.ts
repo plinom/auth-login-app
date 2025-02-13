@@ -4,7 +4,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { ObjectId } from 'mongoose';
+import { Types } from 'mongoose';
 import { Server, Socket } from 'socket.io';
 
 import { RoomsService } from '../rooms/rooms.service';
@@ -30,61 +30,116 @@ export class MessagesGateway implements OnGatewayDisconnect {
   @SubscribeMessage('add-message')
   async addMessage(
     client: Socket,
-    data: { roomId: ObjectId; text: string; userId: string },
+    data: { firebaseId: string; roomId: Types.ObjectId; text: string },
   ) {
-    const user = await this.usersService.findUserByFirebaseid(data.userId);
+    try {
+      const { firebaseId, roomId, text } = data;
+      const user = await this.usersService.findByFirebaseId(firebaseId);
+      if (!user) throw new Error('User not found');
 
-    const message = await this.messagesService.createMessage(
-      new Date(),
-      user.id,
-      data.roomId,
-      data.text,
-    );
+      const message = await this.messagesService.createMessage(
+        user.firebaseId,
+        roomId,
+        text,
+      );
+      await this.usersService.updateMessages(firebaseId, message._id);
 
-    const room = await this.roomsService.addNewMessage(data.roomId, message);
+      const room = await this.roomsService.addNewMessage(roomId, message._id);
 
-    this.server.in(room._id.toString()).emit('message', message);
+      this.server.to(room._id.toString()).emit('message', message);
+    } catch (error) {
+      client.emit('error', { message: error.message });
+    }
+  }
+
+  @SubscribeMessage('add-room')
+  async addRoom(client: Socket, data: { firebaseId: string; name: string }) {
+    try {
+      const { firebaseId, name } = data;
+      await this.usersService.findByFirebaseId(firebaseId);
+
+      await this.roomsService.createRoom(data.firebaseId, {
+        name,
+      });
+
+      const rooms = await this.roomsService.getAll();
+
+      this.server.emit('rooms-list', rooms);
+    } catch (error) {
+      client.emit('error', { message: error.message });
+    }
   }
 
   @SubscribeMessage('enter-chat-room')
   async enterChatRoom(
     client: Socket,
-    data: { roomId: string; userId: string },
+    data: { firebaseId: string; roomId: Types.ObjectId },
   ) {
-    const user = await this.usersService.findUserByFirebaseid(data.userId);
+    try {
+      const { firebaseId, roomId } = data;
+      const user = await this.usersService.findByFirebaseId(firebaseId);
+      if (!user) throw new Error('User not found');
 
-    user.clientId = client.id;
+      await this.usersService.updateClientId(firebaseId, client.id);
 
-    await this.usersService.updateClientId(user._id, user);
+      const roomIdString = roomId.toString();
 
-    client.join(data.roomId);
-    client.broadcast
-      .to(data.roomId)
-      .emit('users-changed', { event: 'joined', user: user.id });
+      client.join(roomIdString);
+
+      const messages = await this.messagesService.getAllByRoomId(roomId);
+
+      client.emit('existing-messages', messages);
+
+      client
+        .to(roomIdString)
+        .emit('users-changed', { event: 'joined', user: user.firebaseId });
+    } catch (error) {
+      client.emit('error', { message: error.message });
+    }
+  }
+
+  @SubscribeMessage('fetch-rooms')
+  async fetchRooms(client: Socket) {
+    try {
+      const rooms = await this.roomsService.getAll();
+      client.emit('rooms-list', rooms);
+    } catch (error) {
+      client.emit('error', { message: error.message });
+    }
   }
 
   async handleDisconnect(client: Socket) {
-    const user = await this.usersService.findUserByClientId(client.id);
+    try {
+      const user = await this.usersService.findByClientId(client.id);
 
-    if (user) {
-      this.server.emit('users-changed', {
-        event: 'left',
-        user: user.id,
-      });
+      if (user) {
+        this.server.emit('users-changed', {
+          event: 'left',
+          user: user.firebaseId,
+        });
+      }
+    } catch (error) {
+      client.emit('error', { message: error.message });
     }
   }
 
   @SubscribeMessage('leave-chat-room')
   async leaveChatRoom(
     client: Socket,
-    data: { roomId: string; userId: string },
+    data: { firebaseId: string; roomId: Types.ObjectId },
   ) {
-    const user = await this.usersService.findUserByFirebaseid(data.userId);
+    try {
+      const user = await this.usersService.findByFirebaseId(data.firebaseId);
 
-    client.broadcast
-      .to(data.roomId)
-      .emit('users-changed', { event: 'left', user: user.id });
+      const roomIdString = data.roomId.toString();
 
-    client.leave(data.roomId);
+      client
+        .to(roomIdString)
+        .emit('users-changed', { event: 'left', user: user.firebaseId });
+
+      client.leave(roomIdString);
+    } catch (error) {
+      client.emit('error', { message: error.message });
+    }
   }
 }

@@ -1,23 +1,20 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ObjectId, Types } from 'mongoose';
+import { Types } from 'mongoose';
 
-import { Message } from '../../messages/schemas/message.schema';
-import { User } from '../../users/schema/user.schema';
-
-@Schema()
+@Schema({ timestamps: true })
 export class Room {
-  _id: ObjectId;
+  _id: Types.ObjectId;
 
-  @Prop({ type: [{ ref: 'User', type: Types.ObjectId }] })
-  connectedUsers: User[];
+  @Prop({ default: [], type: [{ ref: 'User', type: String }] })
+  connectedUsersIds: string[];
 
   @Prop({ ref: 'User', required: true, type: String })
   createdBy: string;
 
-  @Prop({ type: [{ ref: 'Message', type: Types.ObjectId }] })
-  messages: Message[];
+  @Prop({ default: [], type: [{ ref: 'Message', type: Types.ObjectId }] })
+  messages: Types.ObjectId[];
 
-  @Prop({ maxlength: 20, minlength: 5, required: true })
+  @Prop({ maxlength: 20, minlength: 5, required: true, type: String })
   name: string;
 }
 
