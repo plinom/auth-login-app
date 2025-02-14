@@ -10,6 +10,35 @@ interface Props {
 }
 
 const theme = createTheme({
+  colorSchemes: {
+    dark: true,
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          '&:hover': {
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+            transform: 'translateY(-2px)',
+          },
+          transition: 'all 0.3s ease-in-out',
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          '&:hover': {
+            transform: 'scale(1.02)',
+          },
+          transition: 'transform 0.3s ease-in-out',
+        },
+      },
+    },
+  },
+  shape: {
+    borderRadius: 8,
+  },
   typography: {
     fontFamily: 'var(--font-roboto)',
   },

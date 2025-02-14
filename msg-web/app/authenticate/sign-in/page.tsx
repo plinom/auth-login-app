@@ -100,6 +100,7 @@ export default function Page() {
             helperText={errors.email?.message}
             label='Email'
             onChange={onChange}
+            placeholder='Your email'
             size='small'
             variant='outlined'
           />
@@ -124,6 +125,7 @@ export default function Page() {
             helperText={errors.password?.message}
             label='Password'
             onChange={onChange}
+            placeholder='Your password'
             size='small'
             type='password'
             variant='outlined'

@@ -19,7 +19,7 @@ interface Props {
 
 export const Menu: FC<Props> = ({ open, toggleMenu }) => {
   return (
-    <Drawer onClose={toggleMenu} open={open}>
+    <Drawer anchor='bottom' onClose={toggleMenu} open={open}>
       <Box onClick={toggleMenu} role='presentation' sx={{ width: 250 }}>
         <List>
           {menuItems.map((item) => (

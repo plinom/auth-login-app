@@ -4,6 +4,7 @@ import { roboto } from '@/src/fonts/roboto.font';
 import { MuiUiProvider } from '@/src/providers/mui-ui.provider';
 import { NotistackProvider } from '@/src/providers/notistack.provider';
 import { TanstackProvider } from '@/src/providers/tanstack-query.provider';
+import CssBaseline from '@mui/material/CssBaseline';
 import { ReactNode } from 'react';
 
 export const metadata: Metadata = {
@@ -21,7 +22,10 @@ export default function RootLayout({
       <body className={roboto.className}>
         <MuiUiProvider>
           <TanstackProvider>
-            <NotistackProvider>{children}</NotistackProvider>
+            <NotistackProvider>
+              {children}
+              <CssBaseline />
+            </NotistackProvider>
           </TanstackProvider>
         </MuiUiProvider>
       </body>

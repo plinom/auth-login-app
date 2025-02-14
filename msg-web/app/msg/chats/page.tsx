@@ -50,7 +50,7 @@ const Page: FC<Props> = ({ token, user }) => {
   }, [token, user.email]);
 
   return (
-    <Paper elevation={3} sx={{ margin: 'auto', padding: 2 }}>
+    <>
       <List>
         {rooms.length > 0 ? (
           rooms.map((room) => (
@@ -90,7 +90,7 @@ const Page: FC<Props> = ({ token, user }) => {
       >
         Add Room
       </Button>
-    </Paper>
+    </>
   );
 };
 

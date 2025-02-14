@@ -145,6 +145,7 @@ export default function Page() {
             helperText={errors.email?.message}
             label='Email'
             onChange={onChange}
+            placeholder='Your email'
             size='small'
             value={value ?? ''}
             variant='outlined'
@@ -169,6 +170,7 @@ export default function Page() {
             helperText={errors.password?.message}
             label='Password'
             onChange={onChange}
+            placeholder='Your password'
             size='small'
             type='password'
             value={value ?? ''}
@@ -194,6 +196,7 @@ export default function Page() {
             helperText={errors.confirmPassword?.message}
             label='Confirm Password'
             onChange={onChange}
+            placeholder='Your confirm password'
             size='small'
             type='password'
             value={value ?? ''}
