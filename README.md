@@ -1,40 +1,84 @@
-# MSG
+# Turborepo starter
 
-## Environment Configuration
+This Turborepo starter is maintained by the Turborepo core team.
 
-This project consists of an API application and a web application. Below are the required environment variables for each part of the application.
+## Using this example
 
-### msg-api Application Environment Variables
+Run the following command:
 
-The API application requires the following environment variables:
+```sh
+npx create-turbo@latest
+```
 
-#### General Configuration
-- `WEB_HOST`: Host address for the web application.
-- `WEB_PORT`: Port for the web application to listen on.
-- `API_HOST`: Host address for the API server.
-- `API_PORT`: Port for the API server to listen on.
+## What's inside?
 
-#### Database and Firebase Configuration
-- `MONGO_URI`: MongoDB connection string (including credentials if required).
-- `FIREBASE_CLIENT_EMAIL`: Firebase service account client email.
-- `FIREBASE_PRIVATE_KEY`: Firebase service account private key.
-- `FIREBASE_PROJECT_ID`: Firebase project ID.
+This Turborepo includes the following packages/apps:
 
-### msg-web Application Environment Variables
+### Apps and Packages
 
-The web application has its own set of required environment variables:
+- `docs`: a [Next.js](https://nextjs.org/) app
+- `web`: another [Next.js](https://nextjs.org/) app
+- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
+- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
 
-#### General Configuration
-- `API_HOST`: Host address of the API server. Set to `localhost` by default.
-- `API_PORT`: Port of the API server. Set to `3001` by default.
-- `WEB_HOST`: Host address for the web application. Set to `localhost` by default.
-- `WEB_PORT`: Port for the web application to listen on. Set to `3000` by default.
+Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 
-#### Firebase Configuration
-- `FIREBASE_API_KEY`: Firebase API key.
-- `FIREBASE_AUTH_DOMAIN`: Firebase Auth domain.
-- `FIREBASE_PROJECT_ID`: Firebase project ID.
-- `FIREBASE_STORAGE_BUCKET`: Firebase storage bucket URL.
-- `FIREBASE_MESSAGING_SENDER_ID`: Firebase messaging sender ID.
-- `FIREBASE_APP_ID`: Firebase app ID.
-- `FIREBASE_MEASUREMENT_ID`: Firebase measurement ID.
+### Utilities
+
+This Turborepo has some additional tools already setup for you:
+
+- [TypeScript](https://www.typescriptlang.org/) for static type checking
+- [ESLint](https://eslint.org/) for code linting
+- [Prettier](https://prettier.io) for code formatting
+
+### Build
+
+To build all apps and packages, run the following command:
+
+```
+cd my-turborepo
+pnpm build
+```
+
+### Develop
+
+To develop all apps and packages, run the following command:
+
+```
+cd my-turborepo
+pnpm dev
+```
+
+### Remote Caching
+
+> [!TIP]
+> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+
+Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+
+By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+
+```
+cd my-turborepo
+npx turbo login
+```
+
+This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+
+Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+
+```
+npx turbo link
+```
+
+## Useful Links
+
+Learn more about the power of Turborepo:
+
+- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
+- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
+- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
+- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
+- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
+- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
